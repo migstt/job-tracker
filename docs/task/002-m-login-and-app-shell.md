@@ -1,7 +1,9 @@
 # Sign In and App Shell
 
 > **ID:** 2-m
-> **Status:** PLANNED
+> **Status:** TESTING
+> **Completed:** Oct 12, 2026
+> **Implementation Notes:** The code is done and the redirects work. The Google sign in itself is not tested, because the Google provider was still off in Supabase.
 > **Priority:** HIGH
 > **Type:** feature
 > **Version Impact:** minor
@@ -16,19 +18,19 @@ Let anyone sign in with Google through Supabase Auth. Add the layout every page 
 ## Requirements
 
 ### Must Have
-- [ ] `/login` page with one button: "Continue with Google"
-- [ ] `/auth/callback` route that finishes the sign in and goes to `/`
-- [ ] Clear error text on `/login` when sign in fails or is cancelled
-- [ ] Sign out
-- [ ] All routes except `/login` and `/auth/callback` need a signed-in user
-- [ ] Header nav: Today, Applications, Skipped, Stats
-- [ ] User menu with name or email, Settings link, and Sign out
-- [ ] On a phone, the nav opens from a menu button (shadcn `Sheet`)
-- [ ] Light and dark mode
-- [ ] Empty placeholder pages for each nav link
+- [x] `/login` page with one button: "Continue with Google"
+- [x] `/auth/callback` route that finishes the sign in and goes to `/`
+- [x] Clear error text on `/login` when sign in fails or is cancelled
+- [x] Sign out
+- [x] All routes except `/login` and `/auth/callback` need a signed-in user
+- [x] Header nav: Today, Applications, Skipped, Stats
+- [x] User menu with name or email, Settings link, and Sign out
+- [x] On a phone, the nav opens from a menu button (shadcn `Sheet`)
+- [x] Light and dark mode
+- [x] Empty placeholder pages for each nav link
 
 ### Nice to Have
-- [ ] Short line on `/login` that says what the app does
+- [x] Short line on `/login` that says what the app does
 
 ## Current State
 
@@ -124,3 +126,24 @@ Add the `Sheet` menu for small screens and the theme toggle.
 ## Related
 
 - Plan: [PLAN.md](../PLAN.md)
+
+## Implementation Notes (Oct 12)
+
+Checked on the dev server, signed out:
+- `/`, `/applications`, and `/settings` redirect to `/login`
+- `/login` shows the "Continue with Google" button
+- `/auth/callback` with no code goes to `/login?error=failed`
+- `/auth/callback?error=access_denied` goes to `/login?error=cancelled` and the page shows the message
+- `pnpm lint` and `pnpm build` pass
+
+Not checked yet (needs the Google provider turned on in Supabase):
+- The full Google sign in, the user menu, and sign out
+- A first-time user getting a `user_settings` row through a real sign in
+- The layout at 375px and keyboard use, in a browser
+
+Changes from the plan:
+- This project has Cache Components on. A page that reads cookies cannot be prerendered, so the `(app)` layout and the login page set `export const instant = false`. Later, the header can stay static and only the user menu can stream in.
+- Added `/settings` as a placeholder, because the user menu links to it.
+- Added `src/lib/supabase/proxy.ts` (session refresh logic), `src/lib/site.ts` (name, description, URL), `src/features/auth/errors.ts` (error codes and text), `src/components/nav-links.tsx`, `mobile-nav.tsx`, `theme-provider.tsx`, and `page-header.tsx`.
+- The callback takes no "next" URL at all. It always goes to `/`.
+- `NEXT_PUBLIC_SITE_URL` is optional and defaults to `http://localhost:3000`.
