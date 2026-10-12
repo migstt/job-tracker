@@ -1,7 +1,7 @@
 # Supabase Project, Schema, and RLS
 
 > **ID:** 1-m
-> **Status:** PLANNED
+> **Status:** IN PROGRESS (blocked on Step 1)
 > **Priority:** HIGH
 > **Type:** feature
 > **Version Impact:** minor
@@ -17,15 +17,15 @@ Connect the app to Supabase and create the four tables from `docs/PLAN.md`. The 
 
 ### Must Have
 - [ ] Supabase project created and linked with the Supabase CLI
-- [ ] `.env.local` with the project URL and publishable key, plus `.env.example` in git
-- [ ] Migration that creates `applications`, `stage_events`, `skipped_jobs`, `user_settings` and the `application_stage` enum
-- [ ] A `user_settings` row is made for each new user (trigger on `auth.users`), with 7 and 14 days as defaults
-- [ ] RLS on in all four tables, with select, insert, update, delete policies for the owner only
-- [ ] Index on every `user_id` and on `stage_events.application_id`
-- [ ] `updated_at` is set by a trigger on `applications`
-- [ ] Stage change adds a row to `stage_events` (database trigger)
+- [ ] `.env.local` with the project URL and publishable key (`.env.example` is done)
+- [x] Migration that creates `applications`, `stage_events`, `skipped_jobs`, `user_settings` and the `application_stage` enum
+- [x] A `user_settings` row is made for each new user (trigger on `auth.users`), with 7 and 14 days as defaults
+- [x] RLS on in all four tables, with select, insert, update, delete policies for the owner only
+- [x] Index on every `user_id` and on `stage_events.application_id`
+- [x] `updated_at` is set by a trigger on `applications`
+- [x] Stage change adds a row to `stage_events` (database trigger)
 - [ ] Generated TypeScript types in `src/lib/supabase/database.types.ts`
-- [ ] Server and browser Supabase clients in `src/lib/supabase/`
+- [x] Server and browser Supabase clients in `src/lib/supabase/`
 
 ### Nice to Have
 - [ ] `supabase/seed.sql` with a few fake rows for local work
@@ -108,3 +108,23 @@ Generate types with `supabase gen types typescript --linked`. Add the server and
 ## Related
 
 - Plan: [PLAN.md](../PLAN.md)
+
+## Progress Notes (Oct 12)
+
+Written and committed, but not yet run against a database:
+- `supabase/migrations/20261012033743_init.sql`
+- `src/lib/supabase/env.ts`, `server.ts`, `client.ts`
+- `pnpm db:push` and `pnpm db:types` scripts
+
+Still to do after the Supabase project exists:
+1. `pnpm supabase login`, then `pnpm supabase link`
+2. `pnpm db:push`, then run the security advisor
+3. `pnpm db:types`, then add the `Database` type to both clients
+4. Run the testing checklist
+
+Changes from the plan:
+- `user_settings` has no delete policy. The row is removed only when the user is deleted.
+- The new-user trigger function is in a `private` schema, because it must be SECURITY DEFINER and should not be callable over the API.
+- The tables have explicit grants for `authenticated` and none for `anon`.
+- No `seed.sql` yet. Seed rows need a real user id, and there is no local database.
+- Added `src/lib/supabase/env.ts`, so the env vars are read and checked in one place.
