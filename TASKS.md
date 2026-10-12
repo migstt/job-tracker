@@ -10,6 +10,7 @@ Tasks ready for `/implement {ID}`.
 
 | ID | Task | Priority | Task Doc | Created |
 |----|------|----------|----------|---------|
+| 3 | UI Foundation: Wider Layout and Reusable Components | HIGH | [003-m-ui-foundation.md](docs/task/003-m-ui-foundation.md) | Oct 12 |
 
 ---
 
@@ -26,8 +27,8 @@ Tasks being tested via `/test`.
 
 | ID | Task | Task Doc | Test Report | Status |
 |----|------|----------|-------------|--------|
-| 1 | Supabase Project, Schema, and RLS | [001-m-supabase-schema.md](docs/task/001-m-supabase-schema.md) | Pending | Ready for test |
-| 2 | Sign In and App Shell | [002-m-login-and-app-shell.md](docs/task/002-m-login-and-app-shell.md) | Pending | Code done. Google sign in not tested: the provider is still off in Supabase |
+| 1 | Supabase Project, Schema, and RLS | [001-m-supabase-schema.md](docs/task/001-m-supabase-schema.md) | Pending | Database checks passed. No UI to test |
+| 2 | Sign In and App Shell | [002-m-login-and-app-shell.md](docs/task/002-m-login-and-app-shell.md) | Pending | Sign in and sign out confirmed by Miguel on Oct 12. Phone width and keyboard not checked |
 
 ---
 

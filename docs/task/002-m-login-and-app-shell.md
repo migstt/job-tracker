@@ -3,7 +3,7 @@
 > **ID:** 2-m
 > **Status:** TESTING
 > **Completed:** Oct 12, 2026
-> **Implementation Notes:** The code is done and the redirects work. The Google sign in itself is not tested, because the Google provider was still off in Supabase.
+> **Implementation Notes:** The code is done and the redirects work. Miguel confirmed on Oct 12 that Google sign in and sign out work.
 > **Priority:** HIGH
 > **Type:** feature
 > **Version Impact:** minor

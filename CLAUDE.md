@@ -83,6 +83,19 @@ src/
 - Must work at 375px wide. Tables become a list of cards on small screens.
 - Every field has a label. Every page works with the keyboard.
 - Light and dark mode both look right.
+- Use a shadcn component when one fits, before writing custom markup.
+- Keep side space small. The page width and gutter are defined once and shared by the header and the pages.
+- Build shared components for anything used on more than one page (page header, empty state, submit button, and so on).
+
+## Things that are easy to get wrong
+
+- **Cache Components is on** (`cacheComponents: true` in `next.config.ts`). A page or layout that reads cookies cannot be prerendered. The `(app)` layout and the login page set `export const instant = false` for this.
+- **`createClient()` on the server calls `await connection()` first.** Without it, Next.js reports a `Date.now()` error from the Supabase client.
+- **shadcn here is built on Base UI, not Radix.** Compose with the `render` prop, for example `<SheetTrigger render={<Button />}>`. There is no `asChild`. `DropdownMenuLabel` must be inside a `DropdownMenuGroup`.
+- **Auth checks use `getCurrentUser()`** from `src/features/auth/queries.ts`. It uses `getClaims()`, which verifies the token. Never use `getSession()` on the server.
+- **One Supabase project is used for both dev and prod.** A migration hits real data. Test SQL inside a transaction that rolls back.
+- **`pnpm supabase migration new <name>` waits for input** when run without a terminal. Add `</dev/null`.
+- **The dev server log is at `.next/dev/logs/next-development.log`.** Read it to see server and browser errors.
 
 ## Privacy
 

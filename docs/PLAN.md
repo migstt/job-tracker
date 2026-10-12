@@ -21,6 +21,8 @@ Anyone can sign in and use it. Each user sees only their own data.
 - Works on a phone first. Tables turn into a list of cards on small screens.
 - Light and dark mode from the shadcn theme.
 - Every form field has a label. Every page works with the keyboard.
+- Use a shadcn component when one fits, before writing custom markup.
+- Little empty space at the sides. The page width is defined once, in `PageContainer`.
 
 ## Pages
 
@@ -94,15 +96,16 @@ Each line becomes one task doc in `docs/task/` when I get to it.
 | --- | --- | --- |
 | 1 | Supabase project, schema, RLS | Everything needs the database |
 | 2 | Sign in with Google, app shell | Layout and nav for all pages |
-| 3 | Applications list, add, edit | The core of the app |
-| 4 | Application detail page with stage history | One page per job |
-| 5 | Today page with the follow-up rules | The main win over a sheet |
-| 6 | CSV import | Real data from day one, and anyone can bring their sheet |
-| 7 | Skipped jobs and repeat warning | Small, uses the same patterns |
-| 8 | Stats page | Practice for a dashboard test task |
-| 9 | Settings: follow-up days, export, delete account | Needed before other people use it |
-| 10 | Deploy to Vercel, demo account, privacy note | Something to show in interviews |
-| 11 | Paste a job post, AI fills the form, with a daily limit per user | The AI part |
+| 3 | UI foundation: wider layout, shared components | Later pages reuse these, so nothing is repeated |
+| 4 | Applications list, add, edit | The core of the app |
+| 5 | Application detail page with stage history | One page per job |
+| 6 | Today page with the follow-up rules | The main win over a sheet |
+| 7 | CSV import | Real data from day one, and anyone can bring their sheet |
+| 8 | Skipped jobs and repeat warning | Small, uses the same patterns |
+| 9 | Stats page | Practice for a dashboard test task |
+| 10 | Settings: follow-up days, export, delete account | Needed before other people use it |
+| 11 | Deploy to Vercel, demo account, privacy note | Something to show in interviews |
+| 12 | Paste a job post, AI fills the form, with a daily limit per user | The AI part |
 
 ## More ideas for later
 
