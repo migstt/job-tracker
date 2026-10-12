@@ -1,4 +1,4 @@
-export const siteName = "Job Tracker";
+export const siteName = "Job Applications Tracker";
 
 export const siteDescription =
   "Track your job applications and see what to follow up on today.";
