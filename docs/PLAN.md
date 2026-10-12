@@ -1,6 +1,8 @@
 # Job Tracker Plan
 
-A web app to track my job applications. It should do more than a sheet: it knows my follow-up rules and tells me what to do today.
+A web app to track job applications. It should do more than a sheet: it knows your follow-up rules and tells you what to do today.
+
+Anyone can sign in and use it. Each user sees only their own data.
 
 ## Stack
 
@@ -24,13 +26,14 @@ A web app to track my job applications. It should do more than a sheet: it knows
 
 | Route | What it shows |
 | --- | --- |
-| `/login` | Email and password login |
+| `/login` | Sign in with Google |
 | `/` | Today: follow-ups due, overdue items, drafts not sent |
 | `/applications` | All applications, with search and a stage filter |
 | `/applications/new` | Add form |
 | `/applications/[id]` | One application: details, job post, message sent, history |
 | `/skipped` | Jobs I looked at and did not apply to |
 | `/stats` | Counts by stage per week, reply rate per source |
+| `/settings` | Follow-up days, export my data, delete my account |
 
 ## Data model
 
@@ -74,11 +77,13 @@ All tables have `user_id` and Row Level Security, so each user sees only their o
 
 **skipped_jobs**: id, user_id, seen_on, title, source, job_url, reason.
 
-## My rules, built in
+**user_settings**: user_id (primary key), follow_up_days (default 7), no_reply_days (default 14), updated_at. One row per user, made on first sign in.
+
+## Follow-up rules
 
 - An application is "due" when `next_step_on` is today or earlier.
-- If the stage is still Applied 7 days after `applied_on`, show "follow up".
-- If the stage is still Applied 14 days after `applied_on`, show "mark No reply".
+- If the stage is still Applied `follow_up_days` after `applied_on`, show "follow up". Default is 7.
+- If the stage is still Applied `no_reply_days` after `applied_on`, show "mark No reply". Default is 14.
 - When I change the stage, a row is added to `stage_events`.
 
 ## Build order
@@ -88,15 +93,16 @@ Each line becomes one task doc in `docs/task/` when I get to it.
 | # | Task | Why this order |
 | --- | --- | --- |
 | 1 | Supabase project, schema, RLS | Everything needs the database |
-| 2 | Login and app shell | Layout and nav for all pages |
+| 2 | Sign in with Google, app shell | Layout and nav for all pages |
 | 3 | Applications list, add, edit | The core of the app |
 | 4 | Application detail page with stage history | One page per job |
 | 5 | Today page with the follow-up rules | The main win over a sheet |
-| 6 | Import from `Tracker.md` | Real data from day one |
+| 6 | CSV import | Real data from day one, and anyone can bring their sheet |
 | 7 | Skipped jobs and repeat warning | Small, uses the same patterns |
 | 8 | Stats page | Practice for a dashboard test task |
-| 9 | Deploy to Vercel, demo account with fake data | Something to show in interviews |
-| 10 | Paste a job post, AI fills the form | The AI part |
+| 9 | Settings: follow-up days, export, delete account | Needed before other people use it |
+| 10 | Deploy to Vercel, demo account, privacy note | Something to show in interviews |
+| 11 | Paste a job post, AI fills the form, with a daily limit per user | The AI part |
 
 ## More ideas for later
 
@@ -112,5 +118,8 @@ Each line becomes one task doc in `docs/task/` when I get to it.
 ## Privacy
 
 - This repo can be public. Real application data lives only in Supabase.
-- The import file with my real rows is in `.gitignore`.
+- Users trust the app with private data (pay, contacts, notes). RLS is tested for every table.
+- A user can export their data and delete their account with all their rows.
+- Sign in is Google only. No email and password login, so the app stores no passwords and sends no emails.
+- My own import file with real rows is in `.gitignore`.
 - `.env.local` is never committed.

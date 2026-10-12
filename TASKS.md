@@ -11,7 +11,7 @@ Tasks ready for `/implement {ID}`.
 | ID | Task | Priority | Task Doc | Created |
 |----|------|----------|----------|---------|
 | 1 | Supabase Project, Schema, and RLS | HIGH | [001-m-supabase-schema.md](docs/task/001-m-supabase-schema.md) | Oct 12 |
-| 2 | Login and App Shell | HIGH | [002-m-login-and-app-shell.md](docs/task/002-m-login-and-app-shell.md) | Oct 12 |
+| 2 | Sign In and App Shell | HIGH | [002-m-login-and-app-shell.md](docs/task/002-m-login-and-app-shell.md) | Oct 12 |
 
 ---
 

@@ -11,15 +11,16 @@
 
 ## Overview
 
-Connect the app to Supabase and create the three tables from `docs/PLAN.md`. Turn on Row Level Security so each user can only read and change their own rows. The schema lives in SQL migration files in git.
+Connect the app to Supabase and create the four tables from `docs/PLAN.md`. The app is for many users. Turn on Row Level Security so each user can only read and change their own rows. The schema lives in SQL migration files in git.
 
 ## Requirements
 
 ### Must Have
 - [ ] Supabase project created and linked with the Supabase CLI
 - [ ] `.env.local` with the project URL and publishable key, plus `.env.example` in git
-- [ ] Migration that creates `applications`, `stage_events`, `skipped_jobs` and the `application_stage` enum
-- [ ] RLS on in all three tables, with select, insert, update, delete policies for the owner only
+- [ ] Migration that creates `applications`, `stage_events`, `skipped_jobs`, `user_settings` and the `application_stage` enum
+- [ ] A `user_settings` row is made for each new user (trigger on `auth.users`), with 7 and 14 days as defaults
+- [ ] RLS on in all four tables, with select, insert, update, delete policies for the owner only
 - [ ] Index on every `user_id` and on `stage_events.application_id`
 - [ ] `updated_at` is set by a trigger on `applications`
 - [ ] Stage change adds a row to `stage_events` (database trigger)
@@ -73,10 +74,10 @@ Create a project at supabase.com. Copy the project URL and the publishable key i
 `pnpm add @supabase/supabase-js @supabase/ssr` and `pnpm add -D supabase`. Run `pnpm supabase init`.
 
 ### Step 3: Write the migration
-`pnpm supabase migration new init`. Write the enum, the three tables, indexes, the `updated_at` trigger, the stage history trigger, and the RLS policies.
+`pnpm supabase migration new init`. Write the enum, the four tables, indexes, the new-user trigger, the `updated_at` trigger, the stage history trigger, and the RLS policies.
 
 ### Step 4: Push and check
-`pnpm supabase db push`. Open the Supabase dashboard and check that RLS shows as on for all three tables. Run the security advisor.
+`pnpm supabase db push`. Open the Supabase dashboard and check that RLS shows as on for all four tables. Run the security advisor.
 
 ### Step 5: Types and clients
 Generate types with `supabase gen types typescript --linked`. Add the server and browser clients, typed with `Database`.
@@ -84,7 +85,10 @@ Generate types with `supabase gen types typescript --linked`. Add the server and
 ## Testing Checklist
 
 - [ ] With no login, a select on `applications` returns zero rows
-- [ ] User A cannot read, update, or delete a row owned by user B
+- [ ] User A cannot read, update, or delete a row owned by user B, in every table
+- [ ] User A cannot insert a row with user B's `user_id`
+- [ ] A new user gets one `user_settings` row
+- [ ] Deleting a user deletes all their rows
 - [ ] Changing `stage` adds one row to `stage_events` with the right from and to
 - [ ] Updating a row changes `updated_at`
 - [ ] `pnpm build` and `pnpm lint` pass

@@ -1,4 +1,4 @@
-# Login and App Shell
+# Sign In and App Shell
 
 > **ID:** 2-m
 > **Status:** PLANNED
@@ -11,21 +11,24 @@
 
 ## Overview
 
-Add email and password login with Supabase Auth, and the layout every page will use: a header with the nav links, a sign out button, and a theme switch. Pages behind the login send you to `/login` if you are not signed in.
+Let anyone sign in with Google through Supabase Auth. Add the layout every page will use: a header with the nav links, the user menu, and a theme switch. Pages behind the login send you to `/login` if you are not signed in.
 
 ## Requirements
 
 ### Must Have
-- [ ] `/login` page with email and password, clear error text when it fails
+- [ ] `/login` page with one button: "Continue with Google"
+- [ ] `/auth/callback` route that finishes the sign in and goes to `/`
+- [ ] Clear error text on `/login` when sign in fails or is cancelled
 - [ ] Sign out
-- [ ] All routes except `/login` need a signed-in user
+- [ ] All routes except `/login` and `/auth/callback` need a signed-in user
 - [ ] Header nav: Today, Applications, Skipped, Stats
+- [ ] User menu with name or email, Settings link, and Sign out
 - [ ] On a phone, the nav opens from a menu button (shadcn `Sheet`)
 - [ ] Light and dark mode
 - [ ] Empty placeholder pages for each nav link
 
 ### Nice to Have
-- [ ] Sign up is turned off in Supabase, so only my account exists
+- [ ] Short line on `/login` that says what the app does
 
 ## Current State
 
@@ -42,9 +45,13 @@ Default create-next-app home page. Supabase clients exist after task 1.
 
 Use route groups: `(auth)` for the login page and `(app)` for everything behind the login. The `(app)` layout checks the user on the server and redirects if there is none. A `proxy.ts` file refreshes the session cookie.
 
+Google is the only way to sign in. There is no email and password login, so there is no sign-up form, no password reset, and no confirmation email.
+
 ### Architecture
 
-- Login and sign out are Server Actions.
+- Sign in and sign out are Server Actions in `src/features/auth/actions.ts`.
+- Sign in calls `signInWithOAuth` and redirects to Google. Google sends the user back to `/auth/callback`, which swaps the code for a session.
+- The redirect target after sign in is always a path inside this app. Never trust a full URL from the query string.
 - The auth check uses the server client, never a value read only from the cookie.
 - UI follows the rules in `docs/PLAN.md`: flat, neutral, no gradients.
 
@@ -53,37 +60,50 @@ Use route groups: `(auth)` for the login page and `(app)` for everything behind 
 | Action | File | Description |
 |--------|------|-------------|
 | CREATE | `src/proxy.ts` | Refresh the Supabase session |
-| CREATE | `src/app/(auth)/login/page.tsx` | Login form |
-| CREATE | `src/app/(auth)/login/actions.ts` | `login` and `logout` actions |
+| CREATE | `src/features/auth/actions.ts` | `signInWithGoogle` and `signOut` actions |
+| CREATE | `src/features/auth/components/google-sign-in-button.tsx` | The sign in button |
+| CREATE | `src/features/auth/queries.ts` | `getUser()` for layouts and actions |
+| CREATE | `src/app/(auth)/login/page.tsx` | Login page |
+| CREATE | `src/app/auth/callback/route.ts` | Finish the OAuth sign in |
 | CREATE | `src/app/(app)/layout.tsx` | Auth check, header, main area |
-| CREATE | `src/components/site-header.tsx` | Nav, mobile menu, sign out |
+| CREATE | `src/components/site-header.tsx` | Nav, mobile menu |
+| CREATE | `src/components/user-menu.tsx` | Name, Settings link, Sign out |
 | CREATE | `src/components/theme-toggle.tsx` | Light and dark switch |
+| CREATE | `src/lib/nav.ts` | The nav links, defined once |
 | CREATE | `src/app/(app)/page.tsx` | Today (placeholder) |
 | CREATE | `src/app/(app)/applications/page.tsx` | Placeholder |
 | CREATE | `src/app/(app)/skipped/page.tsx` | Placeholder |
 | CREATE | `src/app/(app)/stats/page.tsx` | Placeholder |
 | DELETE | `src/app/page.tsx` | Replaced by `(app)/page.tsx` |
 | MODIFY | `src/app/layout.tsx` | Title, theme provider, toaster |
+| MODIFY | `.env.example` | Add `NEXT_PUBLIC_SITE_URL` |
 
 ## Implementation Steps
 
-### Step 1: Session refresh
+### Step 1: Set up Google sign in (Miguel does this)
+- Google Cloud Console → Credentials → OAuth client ID (Web). Use the callback URL shown in Supabase.
+- Supabase dashboard → Authentication → Providers: turn on Google, paste the client ID and secret.
+- Supabase dashboard → Authentication → URL Configuration: add `http://localhost:3000/auth/callback` to the redirect URLs.
+
+### Step 2: Session refresh
 Add `src/proxy.ts` using `@supabase/ssr`. Check the Next.js 16 docs for the proxy file name and API.
 
-### Step 2: Login page and actions
-Build the form with shadcn `Card`, `Input`, `Label`, `Button`. Show the error under the form.
+### Step 3: Sign in, callback, sign out
+Add the actions, the callback route, and the login page with shadcn `Card` and `Button`.
 
-### Step 3: App layout
-Add the `(app)` layout with the auth check and the header.
+### Step 4: App layout
+Add the `(app)` layout with the auth check, header, and user menu.
 
-### Step 4: Mobile nav and theme
+### Step 5: Mobile nav and theme
 Add the `Sheet` menu for small screens and the theme toggle.
 
 ## Testing Checklist
 
 - [ ] Opening `/` while signed out goes to `/login`
-- [ ] Wrong password shows an error and stays on `/login`
-- [ ] Right password goes to `/`
+- [ ] Google sign in ends on `/` with my name in the user menu
+- [ ] Cancelling at Google shows an error on `/login`
+- [ ] A first-time user gets a `user_settings` row
+- [ ] A second account sees none of the first account's data
 - [ ] Sign out goes back to `/login`
 - [ ] At 375px wide, the nav is a menu button and nothing scrolls sideways
 - [ ] Tab key reaches every link and button
@@ -91,13 +111,15 @@ Add the `Sheet` menu for small screens and the theme toggle.
 ## Dependencies
 
 - Required packages: `next-themes`
-- Required APIs: Supabase Auth
-- Blocked by: task 1
+- Required APIs: Supabase Auth, a Google OAuth client
+- Blocked by: task 1, and Step 1 above
 
 ## Notes for Implementation Agent
 
 - Load the `shadcn`, `supabase`, and `vercel-react-best-practices` skills first.
-- Create my user by hand in the Supabase dashboard. Do not build a sign up page.
+- Follow the Structure section in `CLAUDE.md`.
+- Google only. Do not build email and password login or other providers.
+- Production redirect URLs are added in the deploy task.
 
 ## Related
 

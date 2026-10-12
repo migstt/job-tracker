@@ -2,7 +2,7 @@
 
 # Job Tracker
 
-A web app to track my job applications. It knows my follow-up rules and shows what to do today. It is also my learning project, so explain choices that are not obvious and keep the code easy to read.
+A web app to track job applications. It knows your follow-up rules and shows what to do today. Anyone can sign in with Google, and each user sees only their own data. It is also my learning project, so explain choices that are not obvious and keep the code easy to read.
 
 Read `docs/PLAN.md` first. It has the pages, data model, UI rules, and build order.
 
@@ -25,6 +25,40 @@ Read `docs/PLAN.md` first. It has the pages, data model, UI rules, and build ord
 - Flow: `/task` → `/implement` → `/test` → `/document` → `/ship`.
 - One task at a time. Do not build things that are not in the task doc.
 
+## Structure
+
+Code is grouped by feature. Each layer has one job, and a layer only calls the layer below it.
+
+```
+src/
+  app/                    routes only: pages, layouts, loading and error files
+  features/<name>/        one folder per feature (applications, today, stats, ...)
+    components/           UI for this feature
+    actions.ts            Server Actions: check user, check input, call queries
+    queries.ts            all Supabase reads and writes for this feature
+    schema.ts             Zod schemas, shared by forms and actions
+    rules.ts              plain functions with no database or React (follow-up rules, pay math)
+    rules.test.ts         unit tests for the rules
+  components/             shared app components (header, page title, empty state)
+  components/ui/          shadcn components
+  lib/                    shared helpers (supabase clients, dates, formatting)
+```
+
+- Pages stay thin: get data from `queries.ts`, pass it to components.
+- Components never call Supabase. Only `queries.ts` does.
+- Business rules live in `rules.ts` as pure functions, so they are easy to test.
+- A feature does not import from another feature's inner files. Shared code moves to `lib/` or `components/`.
+
+## Clean code
+
+- One job per file and per function. If a name needs "and", split it.
+- Do not repeat yourself, but wait for the third copy before making a shared helper. Two similar things are often not the same thing.
+- One source of truth: stages, their labels, and their badge colors are defined once and imported everywhere. Types come from the database types and Zod schemas, not written by hand twice.
+- Depend on small inputs. A function takes the fields it needs, not a whole Supabase client or a whole row when one date is enough.
+- Add to the code by adding a new file or case, not by editing many old ones.
+- Clear names over comments. Comment only the "why".
+- No dead code, no unused exports, no options nobody uses yet.
+
 ## Code rules
 
 - Server Components by default. Add `"use client"` only when a component needs state or browser APIs.
@@ -39,6 +73,7 @@ Read `docs/PLAN.md` first. It has the pages, data model, UI rules, and build ord
 - Every schema change is a new file in `supabase/migrations/`. Never change the schema only in the dashboard.
 - Every table has `user_id` and RLS turned on, with policies for the owner only.
 - Never use the service role key in the app.
+- Other people's private data is in this database. Every new table needs RLS tests for a second user.
 - Docker is not installed here. Work against the linked cloud project.
 
 ## UI rules
