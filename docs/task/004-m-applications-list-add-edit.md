@@ -1,7 +1,9 @@
 # Applications: List, Add, and Edit
 
 > **ID:** 4-m
-> **Status:** PLANNED
+> **Status:** TESTING
+> **Completed:** Oct 12, 2026
+> **Implementation Notes:** Lint and build pass. The Zod rules were run against sample input. Nobody has added or edited a row in a browser yet, and the second-user check was not done.
 > **Priority:** HIGH
 > **Type:** feature
 > **Version Impact:** minor
@@ -16,20 +18,20 @@ The core of the app: a page that lists my applications, a form to add one, and t
 ## Requirements
 
 ### Must Have
-- [ ] `/applications` lists the signed-in user's applications, newest first
-- [ ] The list is a table from the `md` width up, and a list of cards on a phone
-- [ ] Each row shows company, role, source, stage, applied date, and next step with its date
-- [ ] Search by company or role, and a stage filter. Both live in the URL (`?q=` and `?stage=`), so a link or a reload keeps them
-- [ ] Empty state with an "Add application" button when there are no rows, and a different one when a search finds nothing
-- [ ] `/applications/new` has the add form
-- [ ] `/applications/[id]/edit` has the same form, filled in
-- [ ] Company and role are required. Every other field is optional
-- [ ] All input is checked on the server with Zod. Errors show under the field
-- [ ] After a save, go back to the list and show a toast
-- [ ] Stages, their labels, and their badge style are defined once and used by the list, the form, and the login preview
-- [ ] Stage badges are monochrome (see Architecture)
-- [ ] An id that is not mine or does not exist shows the not found page
-- [ ] `pnpm lint` and `pnpm build` pass
+- [x] `/applications` lists the signed-in user's applications, newest first
+- [x] The list is a table from the `md` width up, and a list of cards on a phone
+- [x] Each row shows company, role, source, stage, applied date, and next step with its date
+- [x] Search by company or role, and a stage filter. Both live in the URL (`?q=` and `?stage=`), so a link or a reload keeps them
+- [x] Empty state with an "Add application" button when there are no rows, and a different one when a search finds nothing
+- [x] `/applications/new` has the add form
+- [x] `/applications/[id]/edit` has the same form, filled in
+- [x] Company and role are required. Every other field is optional
+- [x] All input is checked on the server with Zod. Errors show under the field
+- [x] After a save, go back to the list and show a toast
+- [x] Stages, their labels, and their badge style are defined once and used by the list, the form, and the login preview
+- [x] Stage badges are monochrome (see Architecture)
+- [x] An id that is not mine or does not exist shows the not found page
+- [x] `pnpm lint` and `pnpm build` pass
 
 ### Nice to Have
 - [ ] Delete an application, with a confirm dialog
@@ -144,6 +146,15 @@ Run `pnpm lint` and `pnpm build`. Ask Miguel to add, edit, search, and filter in
 - [ ] At 375px the list is cards and nothing scrolls sideways
 - [ ] The form works with the keyboard only, and every field has a label
 - [ ] Light and dark mode both look right
+
+## Deviations
+
+- The filters are a plain GET form (`next/form`) with a Search button, not a client component that updates the URL while typing. It needs no state and works with the keyboard.
+- The save actions return a result and the form shows the toast and goes to the list. A Server Action that redirects cannot show a toast.
+- `add-application-button.tsx` was added, because the button is used in the page header and in the empty state.
+- The login preview became interactive (asked by Miguel on Oct 12): tabs, "Done" buttons, and a stage filter. It added the shadcn `toggle-group` and `preview-data.ts`.
+- Form errors use the red `destructive` token from the shadcn `field` component. Miguel has not decided if errors should be gray.
+- Delete, `loading.tsx`, and `not-found.tsx` (nice to have) were not built.
 
 ## Dependencies
 
