@@ -16,6 +16,7 @@ export default function NewApplicationPage() {
         save={createApplication}
         savedMessage="Application added."
         submitLabel="Add application"
+        returnTo="/applications"
       />
     </>
   );

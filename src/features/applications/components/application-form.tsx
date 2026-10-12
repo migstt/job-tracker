@@ -82,9 +82,17 @@ type ApplicationFormProps = {
   save: (formData: FormData) => Promise<SaveResult>;
   savedMessage: string;
   submitLabel: string;
+  // Where Cancel and a finished save go.
+  returnTo: string;
 };
 
-export function ApplicationForm({ initialValues, save, savedMessage, submitLabel }: ApplicationFormProps) {
+export function ApplicationForm({
+  initialValues,
+  save,
+  savedMessage,
+  submitLabel,
+  returnTo,
+}: ApplicationFormProps) {
   const router = useRouter();
   // The stage is kept in state because React clears a form after it is sent,
   // and a Select does not go back to its first value by itself.
@@ -95,7 +103,7 @@ export function ApplicationForm({ initialValues, save, savedMessage, submitLabel
       const result = await save(formData);
       if (result.ok) {
         toast.success(savedMessage);
-        router.push("/applications");
+        router.push(returnTo);
         return previous;
       }
       return result;
@@ -215,7 +223,7 @@ export function ApplicationForm({ initialValues, save, savedMessage, submitLabel
 
       <div className="flex items-center gap-2">
         <SubmitButton pendingLabel="Saving…">{submitLabel}</SubmitButton>
-        <Button variant="ghost" nativeButton={false} render={<Link href="/applications" />}>
+        <Button variant="ghost" nativeButton={false} render={<Link href={returnTo} />}>
           Cancel
         </Button>
       </div>

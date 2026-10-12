@@ -16,8 +16,8 @@ import type { ApplicationListItem } from "../queries";
 
 const empty = "–";
 
-function editPath(id: number) {
-  return `/applications/${id}/edit`;
+function detailPath(id: number) {
+  return `/applications/${id}`;
 }
 
 function nextStepText({ next_step, next_step_on }: Pick<ApplicationListItem, "next_step" | "next_step_on">) {
@@ -47,7 +47,7 @@ export function ApplicationList({ applications }: { applications: ApplicationLis
             {applications.map((application) => (
               <TableRow key={application.id}>
                 <TableCell>
-                  <Link href={editPath(application.id)} className={companyLink}>
+                  <Link href={detailPath(application.id)} className={companyLink}>
                     {application.company}
                   </Link>
                 </TableCell>
@@ -70,7 +70,7 @@ export function ApplicationList({ applications }: { applications: ApplicationLis
             <Card size="sm">
               <CardHeader>
                 <CardTitle>
-                  <Link href={editPath(application.id)} className={companyLink}>
+                  <Link href={detailPath(application.id)} className={companyLink}>
                     {application.company}
                   </Link>
                 </CardTitle>

@@ -6,6 +6,8 @@ import type { ApplicationInput } from "./schema";
 
 export type Application = Tables<"applications">;
 
+export type StageEvent = Pick<Tables<"stage_events">, "id" | "from_stage" | "to_stage" | "happened_on" | "note">;
+
 const listColumns = "id, company, role, source, stage, applied_on, next_step, next_step_on";
 
 export type ApplicationListItem = Pick<
@@ -58,6 +60,32 @@ export async function updateApplicationRow(id: number, input: ApplicationInput):
   const { data, error } = await supabase
     .from("applications")
     .update(input)
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+  return !error && data !== null;
+}
+
+// Oldest first, so the history reads top to bottom. The id breaks ties on the same day.
+export async function listStageEvents(applicationId: number): Promise<StageEvent[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("stage_events")
+    .select("id, from_stage, to_stage, happened_on, note")
+    .eq("application_id", applicationId)
+    .order("happened_on")
+    .order("id");
+
+  if (error) throw new Error("Could not load the stage history.", { cause: error });
+  return data;
+}
+
+// The stage history goes with it: stage_events has "on delete cascade".
+export async function deleteApplicationRow(id: number): Promise<boolean> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("applications")
+    .delete()
     .eq("id", id)
     .select("id")
     .maybeSingle();
