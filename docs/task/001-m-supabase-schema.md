@@ -1,7 +1,9 @@
 # Supabase Project, Schema, and RLS
 
 > **ID:** 1-m
-> **Status:** IN PROGRESS (blocked on Step 1)
+> **Status:** TESTING
+> **Completed:** Oct 12, 2026
+> **Implementation Notes:** Both migrations are pushed to the linked project. The database checks below passed. Nothing in the app uses the tables yet, so there is no UI to test.
 > **Priority:** HIGH
 > **Type:** feature
 > **Version Impact:** minor
@@ -16,19 +18,19 @@ Connect the app to Supabase and create the four tables from `docs/PLAN.md`. The 
 ## Requirements
 
 ### Must Have
-- [ ] Supabase project created and linked with the Supabase CLI
-- [ ] `.env.local` with the project URL and publishable key (`.env.example` is done)
+- [x] Supabase project created and linked with the Supabase CLI
+- [x] `.env.local` with the project URL and publishable key (`.env.example` is done)
 - [x] Migration that creates `applications`, `stage_events`, `skipped_jobs`, `user_settings` and the `application_stage` enum
 - [x] A `user_settings` row is made for each new user (trigger on `auth.users`), with 7 and 14 days as defaults
 - [x] RLS on in all four tables, with select, insert, update, delete policies for the owner only
 - [x] Index on every `user_id` and on `stage_events.application_id`
 - [x] `updated_at` is set by a trigger on `applications`
 - [x] Stage change adds a row to `stage_events` (database trigger)
-- [ ] Generated TypeScript types in `src/lib/supabase/database.types.ts`
+- [x] Generated TypeScript types in `src/lib/supabase/database.types.ts`
 - [x] Server and browser Supabase clients in `src/lib/supabase/`
 
 ### Nice to Have
-- [ ] `supabase/seed.sql` with a few fake rows for local work
+- [ ] `supabase/seed.sql` with a few fake rows for local work (skipped, see notes)
 
 ## Current State
 
@@ -84,14 +86,14 @@ Generate types with `supabase gen types typescript --linked`. Add the server and
 
 ## Testing Checklist
 
-- [ ] With no login, a select on `applications` returns zero rows
-- [ ] User A cannot read, update, or delete a row owned by user B, in every table
-- [ ] User A cannot insert a row with user B's `user_id`
-- [ ] A new user gets one `user_settings` row
-- [ ] Deleting a user deletes all their rows
-- [ ] Changing `stage` adds one row to `stage_events` with the right from and to
-- [ ] Updating a row changes `updated_at`
-- [ ] `pnpm build` and `pnpm lint` pass
+- [x] With no login, a select on `applications` returns zero rows
+- [x] User A cannot read, update, or delete a row owned by user B, in every table
+- [x] User A cannot insert a row with user B's `user_id`
+- [x] A new user gets one `user_settings` row
+- [x] Deleting a user deletes all their rows
+- [x] Changing `stage` adds one row to `stage_events` with the right from and to
+- [x] Updating a row changes `updated_at`
+- [x] `pnpm build` and `pnpm lint` pass
 
 ## Dependencies
 
@@ -109,22 +111,28 @@ Generate types with `supabase gen types typescript --linked`. Add the server and
 
 - Plan: [PLAN.md](../PLAN.md)
 
-## Progress Notes (Oct 12)
+## Implementation Notes (Oct 12)
 
-Written and committed, but not yet run against a database:
-- `supabase/migrations/20261012033743_init.sql`
-- `src/lib/supabase/env.ts`, `server.ts`, `client.ts`
-- `pnpm db:push` and `pnpm db:types` scripts
+Pushed to the linked Supabase project:
+- `20261012033743_init.sql`: enum, four tables, indexes, triggers, grants, RLS policies
+- `20261012034703_lock_rls_auto_enable.sql`: fixes the two security advisor warnings
 
-Still to do after the Supabase project exists:
-1. `pnpm supabase login`, then `pnpm supabase link`
-2. `pnpm db:push`, then run the security advisor
-3. `pnpm db:types`, then add the `Database` type to both clients
-4. Run the testing checklist
+Checks run against the real database, inside one transaction that was rolled back, so no test rows were left:
+- A new user gets one `user_settings` row
+- Adding an application logs one stage event, a stage change logs one more, other edits log none
+- `updated_at` is set by the trigger, even when the client sends its own value
+- User A cannot insert a row as user B
+- User B cannot read, update, or delete user A's rows, or add history to A's application
+- A user cannot delete their settings row
+- A signed-out visitor cannot read `applications`
+- Deleting a user deletes their applications and settings
+- The security advisor reports no issues
 
 Changes from the plan:
+- One Supabase project is used for now. There is no separate dev database.
 - `user_settings` has no delete policy. The row is removed only when the user is deleted.
 - The new-user trigger function is in a `private` schema, because it must be SECURITY DEFINER and should not be callable over the API.
 - The tables have explicit grants for `authenticated` and none for `anon`.
-- No `seed.sql` yet. Seed rows need a real user id, and there is no local database.
+- No `seed.sql`. Seed rows need a real user id, and there is no local database.
 - Added `src/lib/supabase/env.ts`, so the env vars are read and checked in one place.
+- Added a second migration that removes API access to Supabase's own `rls_auto_enable()` function.

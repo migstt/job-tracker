@@ -18,7 +18,6 @@ Tasks ready for `/implement {ID}`.
 
 | ID | Task | Started | Task Doc | Status |
 |----|------|---------|----------|--------|
-| 1 | Supabase Project, Schema, and RLS | Oct 12 | [001-m-supabase-schema.md](docs/task/001-m-supabase-schema.md) | Blocked: needs the Supabase project and `.env.local` |
 
 ---
 
@@ -28,6 +27,7 @@ Tasks being tested via `/test`.
 
 | ID | Task | Task Doc | Test Report | Status |
 |----|------|----------|-------------|--------|
+| 1 | Supabase Project, Schema, and RLS | [001-m-supabase-schema.md](docs/task/001-m-supabase-schema.md) | Pending | Ready for test |
 
 ---
 
