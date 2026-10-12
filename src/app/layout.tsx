@@ -7,8 +7,9 @@ import { siteDescription, siteName } from "@/lib/site";
 
 import "./globals.css";
 
+// The variable names match the ones the shadcn theme reads in globals.css.
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
