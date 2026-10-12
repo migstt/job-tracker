@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { PageContainer } from "@/components/page-container";
 import { SiteHeader } from "@/components/site-header";
 import { getCurrentUser } from "@/features/auth/queries";
 
@@ -15,8 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <>
       <SiteHeader user={user} />
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6">
-        {children}
+      <main className="flex flex-1 flex-col">
+        <PageContainer className="flex flex-1 flex-col gap-6 py-6">{children}</PageContainer>
       </main>
     </>
   );

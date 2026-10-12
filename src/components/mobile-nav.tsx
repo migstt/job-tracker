@@ -3,8 +3,8 @@
 import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
+import { IconButton } from "@/components/icon-button";
 import { NavLinks } from "@/components/nav-links";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -20,10 +20,7 @@ export function MobileNav() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger
-        render={<Button variant="ghost" size="icon" className="md:hidden" />}
-        aria-label="Open menu"
-      >
+      <SheetTrigger render={<IconButton label="Open menu" className="md:hidden" />}>
         <MenuIcon />
       </SheetTrigger>
       <SheetContent side="left">

@@ -79,7 +79,7 @@ src/
 ## UI rules
 
 - Simple and flat. No gradients, no heavy shadows, no animations for show.
-- Neutral colors. Use color only for stage badges and overdue items.
+- Monochrome: black, white, and grays only. Show stage and overdue with badge style, weight, and icons, not with color.
 - Must work at 375px wide. Tables become a list of cards on small screens.
 - Every field has a label. Every page works with the keyboard.
 - Light and dark mode both look right.

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { MobileNav } from "@/components/mobile-nav";
 import { NavLinks } from "@/components/nav-links";
+import { PageContainer } from "@/components/page-container";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/user-menu";
 import type { CurrentUser } from "@/features/auth/queries";
@@ -14,7 +15,7 @@ type SiteHeaderProps = {
 export function SiteHeader({ user }: SiteHeaderProps) {
   return (
     <header className="border-b">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-2 px-4">
+      <PageContainer className="flex h-14 items-center gap-2">
         <MobileNav />
         <Link href="/" className="mr-4 font-semibold">
           {siteName}
@@ -24,7 +25,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
           <ThemeToggle />
           <UserMenu name={user.name} email={user.email} />
         </div>
-      </div>
+      </PageContainer>
     </header>
   );
 }

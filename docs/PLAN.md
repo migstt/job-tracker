@@ -16,7 +16,7 @@ Anyone can sign in and use it. Each user sees only their own data.
 ## UI rules
 
 - Simple and flat. No gradients, no heavy shadows, no animations for show.
-- Neutral colors. Color is used only for stage badges and "overdue".
+- Monochrome: black, white, and grays only. Show stage and overdue with badge style, weight, and icons, not with color.
 - One font (Geist, already set up).
 - Works on a phone first. Tables turn into a list of cards on small screens.
 - Light and dark mode from the shadcn theme.

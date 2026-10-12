@@ -1,7 +1,9 @@
 # UI Foundation: Wider Layout and Reusable Components
 
 > **ID:** 3-m
-> **Status:** PLANNED
+> **Status:** TESTING
+> **Completed:** Oct 12, 2026
+> **Implementation Notes:** Lint and build pass. Nobody has looked at the pages in a browser yet. Check the width, the tooltips, the avatar, and the new login page in light and dark mode.
 > **Priority:** HIGH
 > **Type:** enhancement
 > **Version Impact:** patch
@@ -18,17 +20,21 @@ This task comes before the applications list, so that list is built on the share
 ## Requirements
 
 ### Must Have
-- [ ] Less side space: the content area is wider on desktop and keeps a small gutter on phones
-- [ ] The page width and gutter are defined in one place and used by the header and the main area
-- [ ] `PageContainer` component for the shared width and gutter
-- [ ] `PageHeader` takes a title, an optional description, and an optional actions slot (for buttons like "Add application")
-- [ ] `EmptyState` component, built on the shadcn `empty` component, used by every placeholder page
-- [ ] `SubmitButton` component with a pending state, used by the Google sign in form
-- [ ] Sign in error uses the shadcn `alert` component
-- [ ] User menu shows the shadcn `avatar` with the user's initials, not a plain icon
-- [ ] Icon-only buttons (theme switch, menu, account) have a shadcn `tooltip`
-- [ ] No class string for layout is copied between two files
+- [x] Less side space: the content area is wider on desktop and keeps a small gutter on phones
+- [x] The page width and gutter are defined in one place and used by the header and the main area
+- [x] `PageContainer` component for the shared width and gutter
+- [x] `PageHeader` takes a title, an optional description, and an optional actions slot (for buttons like "Add application")
+- [x] `EmptyState` component, built on the shadcn `empty` component, used by every placeholder page
+- [x] `SubmitButton` component with a pending state, used by the Google sign in form
+- [x] Sign in error uses the shadcn `alert` component
+- [x] User menu shows the shadcn `avatar` with the user's initials, not a plain icon
+- [x] Icon-only buttons (theme switch, menu, account) have a shadcn `tooltip`
+- [x] No class string for layout is copied between two files
 - [ ] Looks right at 375px, 768px, and 1440px, in light and dark mode
+
+### Added on Oct 12 (asked by Miguel at /implement)
+- [x] Login page has two parts: a preview with sample data on the left, sign in on the right, with a color change between them
+- [x] The site is monochrome: black, white, and grays only
 
 ### Nice to Have
 - [ ] `loading.tsx` for the `(app)` group using shadcn `skeleton`
@@ -117,6 +123,14 @@ Search for layout class strings that appear in more than one file. Search for ra
 - [ ] Every placeholder page shows the empty state
 - [ ] Light and dark mode both look right
 - [ ] `pnpm lint` and `pnpm build` pass
+
+## Deviations
+
+- `loading.tsx` and `not-found.tsx` (nice to have) were not built.
+- No test for `initials.ts` yet. The project has no test runner.
+- The login preview is `src/features/auth/components/app-preview.tsx`. Its stage names are plain text. Move them to the shared stage list when task 4 adds it.
+- Added the shadcn `spinner` for the pending state of `SubmitButton`.
+- The Google logo keeps its own colors. The `destructive` (red) theme token is still defined but nothing uses it.
 
 ## Dependencies
 
