@@ -10,6 +10,7 @@ Tasks ready for `/implement {ID}`.
 
 | ID | Task | Priority | Task Doc | Created |
 |----|------|----------|----------|---------|
+| 4 | Applications: List, Add, and Edit | HIGH | [004-m-applications-list-add-edit.md](docs/task/004-m-applications-list-add-edit.md) | Oct 12 |
 
 ---
 
